@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<!-- saved from url=(0023)http://localhost:5005/# -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>AI Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <script src="assets/js/jquery-3.5.1.min.js"></script>
+    <link rel="stylesheet" href="assets/css/jquery.autocomplete.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/openseadragon.2.4.2.js"></script>
+    <script src="assets/js/interfaceUtils.js"></script>
+
+    <!-- jQueryFileExplorer -->
+    <script type='text/javascript' src='assets/jQueryFileExplorer/jQueryFileExplorer.js'></script>
+    <script type='text/javascript' src='assets/jQueryFileExplorer/split.js'></script>
+    <link rel='stylesheet' href='assets/jQueryFileExplorer/jQueryFileExplorer.css' type='text/css'/>
+
+  <body>
+    <div id="main-ui" class="container-fluid px-0 d-flex flex-column vh-100 overflow-hidden">
+      <nav id="main-navbar" class="navbar navbar-expand-lg navbar-dark border-bottom border-dark flex-shrink-0 ">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="https://www.gestaltdiagnostics.com/">
+            <img src="assets/images/gestalt_logo.png" width="166" height="40" alt="Gestalt Diagnostics">
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbar-menu">
+            <ul class="navbar-nav">
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle active" id="a_menubar_File" href="http://localhost:5005/#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Files
+                </a>
+                <ul class="dropdown-menu" id="menubar_File" aria-labelledby="navbarDropdownMenuLink">
+                  <li class="nav-item dropdown">
+                    <a id="a_menubar_File_Open" class="dropdown-item" >
+                    <!-- href="http://localhost:5005/#"-->
+                      <span>Open</span>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <div class="row mx-0 flex-grow-1 overflow-hidden">
+        <!-- Row for viewer  -->
+        <div class="col px-0 position-relative" id="ISS_viewer_container">
+          <a id="floating-navbar-toggler" class="hook in floating-menu-btn shadow navbar-dark p-2 d-none" data-bs-toggle="collapse" data-bs-target="#main-navbar" role="button" aria-expanded="false" aria-controls="main-navbar" href="http://localhost:5005/#">
+            <span class="navbar-toggler-icon"></span>
+          </a>
+          <!-- The id is what OSD will look for to draw the viewer, the class is our own css to stylize
+                The ID will give the prefix for all the objects related to the viewer in this case ISS-->
+          <div id="ISS_viewer" class="ISS_viewer h-100"></div>
+        </div>
+
+        <div id="ISS_menu" class="ISS_menu col-xl-4 col-lg-5 col-md-6 col-sm-8 col-xs-12 mh-100 overflow-auto" style="display:none">
+          <div class="row pb-2">
+            <!-- Level 0 tabs -->
+            <ul id="main-tabs-menu" class="nav nav-tabs pt-1 sticky-top">
+              <li>
+                <button data-bs-target="#file-explorer" data-bs-toggle="tab" aria-expanded="true" class="nav-link" id="file-explorer-tab" onclick="openFileBrowser()">
+                  File Explorer
+                </button>
+              </li>
+              <li>
+                <button data-bs-target="#image-gui" data-bs-toggle="tab" aria-expanded="true" class="nav-link" id="title-tab-image">
+                  Slide Info
+                </button>
+              </li>
+              <li>
+                <button data-bs-target="#image-io-meta" data-bs-toggle="tab" aria-expanded="true" class="nav-link" id="title-tab-image">
+                  Slide Info Meta
+                </button>
+              </li>              
+              <li>
+                <button data-bs-target="#image-io-meta-multichannel" data-bs-toggle="tab" aria-expanded="true" class="nav-link" id="title-tab-image">
+                  Slide Info Meta Multichannel
+                </button>
+              </li>              
+            </ul>
+
+            <div id="TM-tabs" class="tab-content">
+              <!-- TAB 1.4 File Explorer ----------------------------------------------------------------------------- -->
+              <div class="tab-pane" id="file-explorer">
+                <div class="panel panel-default">
+                  <div class="panel-body">
+                    <div style='border: 1px solid silver; width: 100%;' id='fileexplorer1'></div>
+                  </div>
+                </div>
+                <!-- end of a main panel -->
+              </div>
+              <!-- TAB 1.4 Slide Info ----------------------------------------------------------------------------- -->
+              <div class="tab-pane" id="image-gui">
+                <div class="panel panel-default">
+                  <div class="panel-body">
+                      <pre>
+                          <code id="json-container-image-gui"></code>
+                      </pre>
+                  </div>
+                </div>
+                <!-- end of a main panel -->
+              </div>
+              <!-- TAB 1.4 Slide Info Meta ----------------------------------------------------------------------------- -->
+              <div class="tab-pane" id="image-io-meta">
+                <div class="panel panel-default">
+                  <div class="panel-body">
+                      <pre>
+                          <code id="json-container-image-io-meta"></code>
+                      </pre>
+                  </div>
+                </div>
+                <!-- end of a main panel -->
+              </div>
+              <!-- TAB 1.4 Slide Info Meta Multi Channel ----------------------------------------------------------------------------- -->
+              <div class="tab-pane" id="image-io-meta-multichannel">
+                <div class="panel panel-default">
+                  <div class="panel-body">
+                      <pre>
+                          <code id="json-container-image-io-meta-multichannel"></code>
+                      </pre>
+                  </div>
+                </div>
+                <!-- end of a main panel -->
+              </div>
+              <!-- end of Plugin-gui-->
+            </div>
+            <!-- end of TM-tabs-->
+          </div>
+          <!-- end of Level 0 tabs -->
+        </div>
+        <!-- end of lateral panel -->
+
+        <div id="ISS_collapser" class="d-flex align-self-center justify-content-end px-0 position-absolute">
+          <div class="btn btn-primary" id="ISS_collapse_btn">
+            <i class="bi bi-caret-right-fill"></i>
+          </div>
+        </div>
+      </div>
+      <!-- end of single row -->
+    </div>
+    <!-- end of container-fuild-->
+    <div id="powered_by_PathFlow" class="d-none" style="left: 10px; bottom: 10px; z-index: 100">
+      <div class="px-1 me-3 viewer-layer">
+        <small><img src="assets/images/gestalt_logo.png" height="22px"> Powered by
+          <a href="https://www.gestaltdiagnostics.com/" target="_blank">Gestalt PathFlow</a></small>
+      </div>
+    </div>
+  <script>
+
+    var viewer = undefined;
+    var file_explorer = undefined;
+    var hosturl = "localhost:8005"// window.location.host;// "localhost:5005"
+
+    function openFileBrowser() {
+
+      if (file_explorer != undefined) {
+        return;
+      }
+
+      $("#fileexplorer1").jQueryFileExplorer({
+        root: "/", 
+        rootLabel:"Server",
+        script: `http://${hosturl}/FileExplorer/GetPath/`,
+        fileScript: openFile,
+      });
+      file_explorer = true;
+    }
+
+    function openFile(file) {
+      update_ISSViewer(file.path);
+    }
+
+    function update_ISSViewer(file_name) {
+
+      window.history.pushState("object or string",
+                ``,
+                `${window.location.origin}${window.location.pathname}?path=${file_name}`);
+
+      file_name = encodeURIComponent(file_name);
+
+      if (viewer != undefined) {
+        viewer.destroy();
+      }
+
+      var scene_id = 0
+      var file_type = "%20" // Why?
+      var tile_size = 254 // Why? 
+
+      viewer = OpenSeadragon({
+            id: "ISS_viewer",
+            prefixUrl: "assets/images/openseadragon/",
+            debugMode: false,
+            showNavigator: true,
+            // ### Example using DZI format (no dimensions or tile size required)
+            tileSources:  `http://${hosturl}/wsi-dzigen/getDZI/${file_type}/${file_name}/${scene_id}/${tile_size}/tile/`,
+      })
+
+      viewer.addHandler("open", function (event) {
+
+
+        $.get( `http://${hosturl}/wsi-dzigen/getSlideInfo/${file_type}/${file_name}/` )
+                  .done(function( data ) {
+                      document.getElementById('json-container-image-gui').innerHTML = JSON.stringify(JSON.parse(data), null, 2);
+                  });
+
+        $.get( `http://${hosturl}/wsi-dzigen/getSlideIOMeta/${file_type}/${file_name}/` )
+                  .done(function( data ) {
+                      document.getElementById('json-container-image-io-meta').innerHTML = data;
+                  });
+
+        $.get( `http://${hosturl}/wsi-dzigen/getMultichannelJSON/${file_type}/${file_name}/` )
+                  .done(function( data ) {
+                      document.getElementById('json-container-image-io-meta-multichannel').innerHTML = JSON.stringify(JSON.parse(data), null, 2);
+                  });
+
+        }, this);
+    }
+
+    // ----------
+    $(document).ready(function () {
+      // Set-up Side-bar collapser
+      interfaceUtils.listen('ISS_collapse_btn','click', function () { toggleRightPanel() },false);
+      toggleRightPanel = function (a) {
+        var op = "ISS";
+        var menu=document.getElementById(op + "_menu");
+        var main=document.getElementById(op + "_viewer_container");
+        var btn=document.getElementById(op + "_collapse_btn");
+        var style = window.getComputedStyle(menu);
+        if (style.display === 'none') {
+            menu.style.display = "block";
+            main.style.width = "66.66666%";
+            main.style.maxWidth = "100%";
+            btn.innerHTML = '<i class="bi bi-caret-right-fill"></i>';
+        }
+        else {
+            menu.style.display = "none";
+            main.style.width = "100%";
+            main.style.maxWidth = "";
+            btn.innerHTML = '<i class="bi bi-caret-left-fill"></i>';
+        }
+      }
+
+      // Configure OpenSeaDragon
+      var queryString = window.location.search;
+      var pathname = window.location.pathname;
+ 
+      if (queryString.includes("path=")) {
+        var file_name = queryString.replace("?path=","")
+        update_ISSViewer(file_name)
+      }
+    });
+    
+  </script>
+</body></html>
