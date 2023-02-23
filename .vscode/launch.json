@@ -20,6 +20,8 @@
             "cwd": "${workspaceFolder}/TileProvider_dziGen/src",
             "args": [
                 "main:app",
+                "--host",
+                "127.0.0.1" // 192.168.150.45  127.0.0.1
                 //"--reload",
                 "--port",
                 "8005",

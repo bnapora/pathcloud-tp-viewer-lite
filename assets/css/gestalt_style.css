@@ -1,0 +1,37 @@
+.navbar-dark {
+  /* background-color: #4C87BA; */
+  background-color: #3F51B5; }
+  
+.ISS_viewer {
+  background-color: white; }
+
+.viewer-layer {
+  background-color: rgba(255, 255, 255, 0.7);
+  opacity: 100%;
+  border-radius: .3rem;
+  color: black; }
+
+.displayregion {
+  border: 1px solid #3F51B5 !important; }
+
+.ISS_menu {
+  background-color: white; }
+
+.overlay-slider {
+  width: 100px; }
+
+#ISS_collapser {
+  right: 0px;
+  width: 12px;
+  line-height: 30vh; }
+
+.renderOptionContainer {
+  display: flex;
+  flex-direction: column; }
+
+.renderOption {
+  display: flex;
+  flex-direction: row; }
+
+.tm-accordion-collapse {
+  margin: 10px; }
