@@ -25,22 +25,23 @@
                 //"--reload",
                 "--port",
                 "8005",
-                "--workers",
-                "1",
+                "--proxy-headers",
+                //"--workers",
+                //"1",
                 "--log-level",
                 "info", // debug, info, warning, error, critical
-                "--access-log",
-                //"--log-config",
-                //"../logs/config.yaml"
+                //"--access-log",
+                "--log-config",
+                "../logs/config.yaml"
 
             ],
             "console": "integratedTerminal",
             "justMyCode": false,
             "env": {
-                //"WEB_CONCURRENCY": "16",
+                "WEB_CONCURRENCY": "1",
                 "FILE_BROWSER_ROUTING_ENABLED": "true",
                 "SFTPFilePath": "D:\\DataSets\\Registration_Breast\\Breast-1",
-                "PYTHONPATH": "${workspaceRoot}"
+                //"PYTHONPATH": "${workspaceRoot}"
             }
         }
     ]
