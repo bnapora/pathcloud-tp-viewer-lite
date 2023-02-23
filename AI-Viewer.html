@@ -156,19 +156,20 @@
 
     var viewer = undefined;
     var file_explorer = undefined;
-    var hosturl = "localhost:8005"// window.location.host;// "localhost:5005"
+    var hosturl = "localhost:8005"  // window.location.host;// "localhost:5005"
 
     function openFileBrowser() {
-
       if (file_explorer != undefined) {
         return;
       }
 
       $("#fileexplorer1").jQueryFileExplorer({
-        root: "/host_Data/DataSets", 
+        root: "D:", 
         rootLabel:"Server",
         script: `http://${hosturl}/FileExplorer/GetPath/`,
         fileScript: openFile,
+        //script: getPath,
+        //fileScript: function(file){window.open("http://192.168.150.45:8005/FileExplorer/GetPath?path=D:");}
       });
       file_explorer = true;
     }
