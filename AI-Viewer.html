@@ -4,47 +4,47 @@
     <title>AI Viewer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
-    <script src="./AI Viewer_files/jquery-3.5.1.min.js"></script>
-    <link rel="stylesheet" href="./AI Viewer_files/jquery.autocomplete.css">
-    <link rel="stylesheet" href="./AI Viewer_files/bootstrap.min.css">
-    <link rel="stylesheet" href="./AI Viewer_files/bootstrap-icons.css">
-    <link rel="stylesheet" href="./AI Viewer_files/style.css">
-    <script src="./AI Viewer_files/bootstrap.bundle.min.js"></script>
-    <script src="./AI Viewer_files/openseadragon/openseadragon.js"></script>
-    <script src="./AI Viewer_files/interfaceUtils.js"></script>
+    <script src="assets/js/jquery-3.5.1.min.js"></script>
+    <link rel="stylesheet" href="assets/css/jquery.autocomplete.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/openseadragon.2.4.2.js"></script>
+    <script src="assets/js/interfaceUtils.js"></script>
 
     <!-- jQueryFileExplorer -->
-    <script type='text/javascript' src='./AI Viewer_files/jQueryFileExplorer/jQueryFileExplorer.js'></script>
-    <script type='text/javascript' src='./AI Viewer_files/jQueryFileExplorer/split.js'></script>
-    <link rel='stylesheet' href='./AI Viewer_files/jQueryFileExplorer/jQueryFileExplorer.css' type='text/css'/>
+    <script type='text/javascript' src='assets/jQueryFileExplorer/jQueryFileExplorer.js'></script>
+    <script type='text/javascript' src='assets/jQueryFileExplorer/split.js'></script>
+    <link rel='stylesheet' href='assets/jQueryFileExplorer/jQueryFileExplorer.css' type='text/css'/>
 
   <body>
     <div id="main-ui" class="container-fluid px-0 d-flex flex-column vh-100 overflow-hidden">
       <nav id="main-navbar" class="navbar navbar-expand-lg navbar-dark border-bottom border-dark flex-shrink-0 ">
         <div class="container-fluid">
           <a class="navbar-brand" href="https://www.gestaltdiagnostics.com/">
-            <img src="./AI Viewer_files/gestalt_logo.png" width="166" height="40" alt="Gestalt Diagnostics">
+            <img src="assets/images/gestalt_logo.png" width="166" height="40" alt="Gestalt Diagnostics">
           </a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
 
           <div class="collapse navbar-collapse" id="navbar-menu">
-            <ul class="navbar-nav">
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle active" id="a_menubar_File" href="http://localhost:5005/#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Files
-                </a>
-                <ul class="dropdown-menu" id="menubar_File" aria-labelledby="navbarDropdownMenuLink">
-                  <li class="nav-item dropdown">
-                    <a id="a_menubar_File_Open" class="dropdown-item" >
-                    <!-- href="http://localhost:5005/#"-->
-                      <span>Open</span>
-                    </a>
-                  </li>
-                </ul>
-              </li>
-            </ul>
+            <!-- <ul class="navbar-nav"> -->
+              <!-- <li class="nav-item dropdown"> -->
+                <!-- <a class="nav-link dropdown-toggle active" id="a_menubar_File" href="http://localhost:5005/#" role="button" data-bs-toggle="dropdown" aria-expanded="false"> -->
+                  <!-- Files -->
+                <!-- </a> -->
+                <!-- <ul class="dropdown-menu" id="menubar_File" aria-labelledby="navbarDropdownMenuLink"> -->
+                  <!-- <li class="nav-item dropdown"> -->
+                    <!-- <a id="a_menubar_File_Open" class="dropdown-item" > -->
+                    <!-- href="http://localhost:5005/#" -->
+                      <!-- <span>Open</span> -->
+                    <!-- </a> -->
+                  <!-- </li> -->
+                <!-- </ul> -->
+              <!-- </li> -->
+            <!-- </ul> -->
           </div>
         </div>
       </nav>
@@ -148,7 +148,7 @@
     <!-- end of container-fuild-->
     <div id="powered_by_PathFlow" class="d-none" style="left: 10px; bottom: 10px; z-index: 100">
       <div class="px-1 me-3 viewer-layer">
-        <small><img src="./AI Viewer_files/gestalt_logo.png" height="22px"> Powered by
+        <small><img src="assets/images/gestalt_logo.png" height="22px"> Powered by
           <a href="https://www.gestaltdiagnostics.com/" target="_blank">Gestalt PathFlow</a></small>
       </div>
     </div>
@@ -165,7 +165,7 @@
       }
 
       $("#fileexplorer1").jQueryFileExplorer({
-        root: "/", 
+        root: "/host_Data/DataSets", 
         rootLabel:"Server",
         script: `http://${hosturl}/FileExplorer/GetPath/`,
         fileScript: openFile,
@@ -195,7 +195,7 @@
 
       viewer = OpenSeadragon({
             id: "ISS_viewer",
-            prefixUrl: "./AI Viewer_files/openseadragon/images/",
+            prefixUrl: "assets/images/openseadragon/",
             debugMode: false,
             showNavigator: true,
             // ### Example using DZI format (no dimensions or tile size required)
