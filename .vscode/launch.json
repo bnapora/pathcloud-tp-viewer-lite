@@ -16,47 +16,28 @@
             "name": "App DZGEN",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/TileProvider_dziGen/app-dzgenerator.py",
+            "module": "uvicorn",
+            "cwd": "${workspaceFolder}/TileProvider_dziGen/src",
             "args": [
-                //"runserver",
-                //"--noreload",
-                //"--nothreading"
+                "main:app",
+                //"--reload",
+                "--port",
+                "8005",
+                "--workers",
+                "1",
+                "--log-level",
+                "info", // debug, info, warning, error, critical
+                "--access-log",
+                //"--log-config",
+                //"../logs/config.yaml"
+
             ],
             "console": "integratedTerminal",
             "justMyCode": false,
             "env": {
-                "PYTHONPATH": "${workspaceRoot}"
-            }
-        },
-        {
-            "name": "App DZGEN Viewer",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/TileProvider_dziGen/app-dzgenerator_viewer.py",
-            "args": [
-                //"runserver",
-                //"--noreload",
-                //"--nothreading"
-            ],
-            "console": "integratedTerminal",
-            "justMyCode": false,
-            "env": {
-                "PYTHONPATH": "${workspaceRoot}"
-            }
-        },
-        {
-            "name": "Profile DZGEN",
-            "type": "python",
-            "request": "launch",
-            "module": "cProfile",
-            "args": [
-                "-o", 
-                "profiling/1_worker.prof", // snakeviz 1_worker.prof
-                "${workspaceFolder}/TileProvider_dziGen/app-dzgenerator.py"
-            ],
-            "console": "integratedTerminal",
-            "justMyCode": false,
-            "env": {
+                //"WEB_CONCURRENCY": "16",
+                "FILE_BROWSER_ROUTING_ENABLED": "true",
+                "SFTPFilePath": "D:\\DataSets\\Registration_Breast\\Breast-1",
                 "PYTHONPATH": "${workspaceRoot}"
             }
         }

@@ -167,7 +167,7 @@
       $("#fileexplorer1").jQueryFileExplorer({
         root: "/", 
         rootLabel:"Server",
-        script: `http://${hosturl}/FileExplorer/GetPath/`,
+        script: `http://${hosturl}/file-explorer/get_path`,
         fileScript: openFile,
       });
       file_explorer = true;
@@ -199,25 +199,25 @@
             debugMode: false,
             showNavigator: true,
             // ### Example using DZI format (no dimensions or tile size required)
-            tileSources:  `http://${hosturl}/wsi-dzigen/getDZI/${file_type}/${file_name}/${scene_id}/${tile_size}/tile/`,
+            tileSources:  `http://${hosturl}/wsi-dzigen/getDZI/${file_type}/${file_name}/${scene_id}/${tile_size}/tile`,
       })
 
       viewer.addHandler("open", function (event) {
 
 
-        $.get( `http://${hosturl}/wsi-dzigen/getSlideInfo/${file_type}/${file_name}/` )
+        $.get( `http://${hosturl}/wsi-dzigen/getSlideInfo/${file_type}/${file_name}` )
                   .done(function( data ) {
-                      document.getElementById('json-container-image-gui').innerHTML = JSON.stringify(JSON.parse(data), null, 2);
+                      document.getElementById('json-container-image-gui').innerHTML = JSON.stringify(data, null, 2);
                   });
 
-        $.get( `http://${hosturl}/wsi-dzigen/getSlideIOMeta/${file_type}/${file_name}/` )
+        $.get( `http://${hosturl}/wsi-dzigen/getSlideIOMeta/${file_type}/${file_name}` )
                   .done(function( data ) {
                       document.getElementById('json-container-image-io-meta').innerHTML = data;
                   });
 
-        $.get( `http://${hosturl}/wsi-dzigen/getMultichannelJSON/${file_type}/${file_name}/` )
+        $.get( `http://${hosturl}/wsi-dzigen/getMultichannelJSON/${file_type}/${file_name}` )
                   .done(function( data ) {
-                      document.getElementById('json-container-image-io-meta-multichannel').innerHTML = JSON.stringify(JSON.parse(data), null, 2);
+                      document.getElementById('json-container-image-io-meta-multichannel').innerHTML = JSON.stringify(data, null, 2);
                   });
 
         }, this);
