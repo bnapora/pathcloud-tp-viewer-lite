@@ -60,7 +60,21 @@
           <div id="ISS_viewer" class="ISS_viewer h-100"></div>
         </div>
 
-        <div id="ISS_menu" class="ISS_menu col-xl-4 col-lg-5 col-md-6 col-sm-8 col-xs-12 mh-100 overflow-auto" style="display:none">
+        <div id="ISS_menu" class="ISS_menu col-xl-4 col-lg-5 col-md-6 col-sm-8 col-xs-12 mh-100 overflow-auto" style="display:block">
+          <div class="row">
+            <div id="ISS_config"  >
+              <label class="nav-link" style="display:inline-block; width:70px">
+                HostURL:              
+              </label>
+              <input  id="txtHostURL" type="text" >
+              <br>
+              <label class="nav-link" style="display:inline-block; width:70px;">
+                SceneID:               
+              </label>
+              <input id="txtSceneID" type="text" >
+              
+            </div>
+          </div>
           <div class="row pb-2">
             <!-- Level 0 tabs -->
             <ul id="main-tabs-menu" class="nav nav-tabs pt-1 sticky-top">
@@ -76,12 +90,12 @@
               </li>
               <li>
                 <button data-bs-target="#image-io-meta" data-bs-toggle="tab" aria-expanded="true" class="nav-link" id="title-tab-image">
-                  Slide Info Meta
+                  Slide Meta
                 </button>
               </li>              
               <li>
                 <button data-bs-target="#image-io-meta-multichannel" data-bs-toggle="tab" aria-expanded="true" class="nav-link" id="title-tab-image">
-                  Slide Info Meta Multichannel
+                  Slide Meta-Multi
                 </button>
               </li>              
             </ul>
@@ -152,24 +166,33 @@
           <a href="https://www.gestaltdiagnostics.com/" target="_blank">Gestalt PathFlow</a></small>
       </div>
     </div>
-  <script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      var txtHostUrl = document.getElementById("txtHostURL");
+      var txtSceneID = document.getElementById("txtSceneID");
+      txtHostUrl.setAttribute("value", defaultHosturl);
+      txtSceneID.setAttribute("value", defaultSceneID);
+    });
+
+  </script>
+  <script type="text/javascript">
 
     var viewer = undefined;
     var file_explorer = undefined;
-    var hosturl = "localhost:8005"  // window.location.host;// "localhost:5005"
+    var defaultHosturl = "http://127.0.0.1:8005"  // window.location.host;// "localhost:5005"
+    var defaultSceneID = "0"
+    var defaultPathRoot = "/"
 
     function openFileBrowser() {
       if (file_explorer != undefined) {
         return;
       }
-
+      var hosturl = document.getElementById("txtHostURL").value;
       $("#fileexplorer1").jQueryFileExplorer({
-        root: "/", 
+        root: defaultPathRoot, 
         rootLabel:"Server",
-        script: `http://${hosturl}/file-explorer/get_path`,
+        script: `${hosturl}/file-explorer/get_path`,
         fileScript: openFile,
-        //script: getPath,
-        //fileScript: function(file){window.open("http://192.168.150.45:8005/FileExplorer/GetPath?path=D:");}
       });
       file_explorer = true;
     }
@@ -190,7 +213,8 @@
         viewer.destroy();
       }
 
-      var scene_id = 0
+      var hosturl = document.getElementById("txtHostURL").value;
+      var scene_id = document.getElementById("txtSceneID").value;
       var file_type = "%20" // Why?
       var tile_size = 254 // Why? 
 
@@ -200,7 +224,7 @@
             debugMode: false,
             showNavigator: true,
             // ### Example using DZI format (no dimensions or tile size required)
-            tileSources:  `http://${hosturl}/wsi-dzigen/getDZI/${file_type}/${file_name}/${scene_id}/${tile_size}/tile`,
+            tileSources:  `${hosturl}/wsi-dzigen/getDZI/${file_type}/${file_name}/${scene_id}/${tile_size}/tile`,
       })
 
       viewer.addHandler("open", function (event) {
