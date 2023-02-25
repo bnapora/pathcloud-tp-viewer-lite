@@ -166,16 +166,12 @@
           <a href="https://www.gestaltdiagnostics.com/" target="_blank">Gestalt PathFlow</a></small>
       </div>
     </div>
+    
   <script type="text/javascript">
     $(document).ready(function () {
-      var txtHostUrl = document.getElementById("txtHostURL");
-      var txtSceneID = document.getElementById("txtSceneID");
-      txtHostUrl.setAttribute("value", defaultHosturl);
-      txtSceneID.setAttribute("value", defaultSceneID);
+      document.getElementById("txtHostURL").setAttribute("value", defaultHosturl);
+      document.getElementById("txtSceneID").setAttribute("value", defaultSceneID);
     });
-
-  </script>
-  <script type="text/javascript">
 
     var viewer = undefined;
     var file_explorer = undefined;
