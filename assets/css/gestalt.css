@@ -1,6 +1,7 @@
 .navbar-dark {
   /* background-color: #4C87BA; */
-  background-color: #3F51B5; }
+  background-color: #3F51B5; 
+}
   
 .ISS_viewer {
   background-color: white; }
@@ -17,13 +18,34 @@
 .ISS_menu {
   background-color: white; }
 
+.lbl-ImageTitle {
+  color: white;
+  padding-top: 10px;
+  
+}
+
 .overlay-slider {
   width: 100px; }
 
 #ISS_collapser {
   right: 0px;
   width: 12px;
-  line-height: 30vh; }
+  line-height: 30vh; 
+  /* background-color: #3F51B5; */
+}
+
+#ISS_collapse_btn {
+  border-radius: 5px 0 0 5px;
+  background-color: #3F51B5;
+  width: inherit;
+  line-height: inherit;
+  padding: 0px;
+  font-size: 12px;
+  z-index: 100;
+}
+.ISS_menu {
+  border-left: 1px solid #3F51B5;
+}
 
 .renderOptionContainer {
   display: flex;

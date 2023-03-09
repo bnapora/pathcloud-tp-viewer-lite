@@ -1,19 +1,14 @@
 <!DOCTYPE html>
-<!-- saved from url=(0023)http://localhost:5005/# -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>AI Viewer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    
-    
-    <!-- <link rel="stylesheet" href="assets/css/jquery.autocomplete.css">
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
-    <link rel="stylesheet" href="assets/css/gestalt_style.css"> -->
-
     <link rel="stylesheet" href="assets/css/jquery.autocomplete.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap-5.1.1/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap-icons-1.5.0/bootstrap-icons.css">
-    <link rel="stylesheet" href="assets/css/gestalt_style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/gestalt.css">
 
     <script src="assets/js/jquery-3.5.1.min.js"></script>
     <script src="assets/vendor/bootstrap-5.1.1/dist/js/bootstrap.bundle.js"></script>
@@ -24,7 +19,7 @@
     <script type='text/javascript' src='assets/jQueryFileExplorer/jQueryFileExplorer.js'></script>
     <script type='text/javascript' src='assets/jQueryFileExplorer/split.js'></script>
     <link rel='stylesheet' href='assets/jQueryFileExplorer/jQueryFileExplorer.css' type='text/css'/>
-
+  </head>
   <body>
     <div id="main-ui" class="container-fluid px-0 d-flex flex-column vh-100 overflow-hidden">
       <nav id="main-navbar" class="navbar navbar-expand-lg navbar-dark border-bottom border-dark flex-shrink-0 ">
@@ -52,6 +47,13 @@
                 <!-- </ul> -->
               <!-- </li> -->
             <!-- </ul> -->
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <div>
+                  <p id="lblImageTitle" class="lbl-ImageTitle" style="padding-left:260px"></p>
+                </div>              
+              </li>
+            </ul>
           </div>
         </div>
       </nav>
@@ -85,22 +87,22 @@
           <div class="row pb-2">
             <!-- Level 0 tabs -->
             <ul id="main-tabs-menu" class="nav nav-tabs pt-1 sticky-top">
-              <li>
+              <li class="nav-item">
                 <button data-bs-target="#file-explorer" data-bs-toggle="tab" aria-expanded="true" class="nav-link" id="file-explorer-tab" onclick="openFileBrowser()">
                   File Explorer
                 </button>
               </li>
-              <li>
-                <button data-bs-target="#image-gui" data-bs-toggle="tab" aria-expanded="true" class="nav-link" id="title-tab-image">
+              <li class="nav-item">
+                <button data-bs-target="#image-gui" data-bs-toggle="tab" aria-expanded="true" class="nav-link active" id="title-tab-image">
                   Slide Info
                 </button>
               </li>
-              <li>
+              <li class="nav-item">
                 <button data-bs-target="#image-io-meta" data-bs-toggle="tab" aria-expanded="true" class="nav-link" id="title-tab-image">
                   Slide Meta
                 </button>
               </li>              
-              <li>
+              <li class="nav-item">
                 <button data-bs-target="#image-io-meta-multichannel" data-bs-toggle="tab" aria-expanded="true" class="nav-link" id="title-tab-image">
                   Slide Meta-Multi
                 </button>
@@ -228,11 +230,20 @@
       }
     }
 
+    function update_ImageTitle(file_name) {
+      ImageTitlePrefix = 'Image Name: '
+      lastIndex = file_name.lastIndexOf('\\')
+      image_name = file_name.slice(lastIndex + 1)
+      document.getElementById('lblImageTitle').innerHTML = ImageTitlePrefix + image_name;
+    }
+
     function update_ISSViewer(file_name) {
 
       window.history.pushState("object or string",
                 ``,
                 `${window.location.origin}${window.location.pathname}?path=${file_name}`);
+
+      update_ImageTitle(file_name);
 
       file_name = encodeURIComponent(file_name);
 
