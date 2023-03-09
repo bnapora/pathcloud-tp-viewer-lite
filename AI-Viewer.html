@@ -96,7 +96,7 @@
                   Slide Info
                 </button>
               </li>
-              <li class="nav-item">
+              <!-- <li class="nav-item">
                 <button data-bs-target="#image-io-meta" data-bs-toggle="tab" aria-expanded="true" class="nav-link" id="title-tab-image">
                   Slide Meta
                 </button>
@@ -105,7 +105,7 @@
                 <button data-bs-target="#image-io-meta-multichannel" data-bs-toggle="tab" aria-expanded="true" class="nav-link" id="title-tab-image">
                   Slide Meta-Multi
                 </button>
-              </li>              
+              </li>               -->
             </ul>
 
             <div id="TM-tabs" class="tab-content">
@@ -231,7 +231,7 @@
 
     function update_ImageTitle(file_name) {
       ImageTitlePrefix = 'Image Name: '
-      lastIndex = file_name.lastIndexOf('\\')
+      lastIndex = file_name.lastIndexOf('/')
       image_name = file_name.slice(lastIndex + 1)
       document.getElementById('lblImageTitle').innerHTML = ImageTitlePrefix + image_name;
     }
