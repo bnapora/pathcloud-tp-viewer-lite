@@ -267,6 +267,31 @@
       viewer.addHandler("open", function (event) {
 
 
+        [["getLabel", 128, 128], ["getThumbnail", 128, 128], ["getMacro", 256, 128]].forEach((element, index) => {
+          // return // Uncomment this line to disable the label, thumbnail macro view
+
+          let [func, width, height] = element
+          let top_value = (index * 135)
+
+          // Wrapper div to append it as child to the viewer canvas.
+          var labelDiv = document.createElement("div")
+          labelDiv.style.position = "absolute"
+          labelDiv.style.pointerEvents = "none"
+          labelDiv.style.left = top_value + "px"
+          labelDiv.style.top = 0 + "px"
+          event.eventSource.canvas.appendChild(labelDiv)
+
+          var labelImg = document.createElement("img")
+          labelImg.src = `${hosturl}/wsi-asset/${func}/${file_name}/0/?width=${width}&height=${height}`
+          labelImg.style.width = `${width}px` //  100%"     256px
+          labelImg.style.height = `${height}px`  //  100%"   128px
+          labelImg.style.objectFit = "contain"
+          labelImg.style.backgroundColor = "#33475b"
+          labelDiv.appendChild(labelImg)
+
+        });
+
+
         $.get( `${hosturl}/wsi-dzigen/getSlideInfo/${file_type}/${file_name}` )
                   .done(function( data ) {
                       document.getElementById('json-container-image-gui').innerHTML = JSON.stringify(data, null, 2);                      
