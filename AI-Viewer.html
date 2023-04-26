@@ -282,7 +282,7 @@
           event.eventSource.canvas.appendChild(labelDiv)
 
           var labelImg = document.createElement("img")
-          labelImg.src = `${hosturl}/wsi-asset/${func}/${file_name}/${scene_id}/?width=${width}&height=${height}`
+          labelImg.src = `${hosturl}/wsi-asset/${func}/${file_name}/${scene_id}?width=${width}&height=${height}`
           labelImg.style.width = `${width}px` //  100%"     256px
           labelImg.style.height = `${height}px`  //  100%"   128px
           labelImg.style.objectFit = "contain"
