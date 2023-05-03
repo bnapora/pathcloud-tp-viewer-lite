@@ -252,16 +252,13 @@
 
       var hosturl = document.getElementById("txtHostURL").value;
       var scene_id = document.getElementById("txtSceneID").value;
-      var file_type = "%20" // Why?
-      var tile_size = 254 // Why? 
 
       viewer = OpenSeadragon({
             id: "ISS_viewer",
             prefixUrl: "assets/images/openseadragon/",
             debugMode: false,
             showNavigator: true,
-            // ### Example using DZI format (no dimensions or tile size required)
-            tileSources:  `${hosturl}/wsi-dzigen/getDZI/${file_type}/${file_name}/${scene_id}/${tile_size}/tile`,
+            tileSources:  `${hosturl}/latest/wsi-dzigen/getDZI/${file_name}/${scene_id}/tile`,
       })
 
       viewer.addHandler("open", function (event) {
@@ -282,7 +279,7 @@
           event.eventSource.canvas.appendChild(labelDiv)
 
           var labelImg = document.createElement("img")
-          labelImg.src = `${hosturl}/wsi-asset/${func}/${file_name}/${scene_id}?width=${width}&height=${height}`
+          labelImg.src = `${hosturl}/latest/wsi-asset/${func}/${file_name}/${scene_id}?width=${width}&height=${height}`
           labelImg.style.width = `${width}px` //  100%"     256px
           labelImg.style.height = `${height}px`  //  100%"   128px
           labelImg.style.objectFit = "contain"
@@ -292,7 +289,7 @@
         });
 
 
-        $.get( `${hosturl}/wsi-dzigen/getSlideInfo/${file_type}/${file_name}` )
+        $.get( `${hosturl}/latest/wsi-dzigen/getSlideInfo/${file_name}` )
                   .done(function( data ) {
                       document.getElementById('json-container-image-gui').innerHTML = JSON.stringify(data, null, 2);                      
                       $("#txtSceneID").prop("max", data.num_scenes - 1); // Set max scene ID on the user interface
@@ -301,12 +298,12 @@
 
                   });
 
-        $.get( `${hosturl}/wsi-dzigen/getSlideIOMeta/${file_type}/${file_name}` )
+        $.get( `${hosturl}/latest/wsi-dzigen/getSlideIOMeta/${file_name}` )
                   .done(function( data ) {
                       document.getElementById('json-container-image-io-meta').innerHTML = data;
                   });
 
-        $.get( `${hosturl}/wsi-dzigen/getMultichannelJSON/${file_type}/${file_name}` )
+        $.get( `${hosturl}/latest/wsi-dzigen/getMultichannelJSON/${file_name}` )
                   .done(function( data ) {
                       document.getElementById('json-container-image-io-meta-multichannel').innerHTML = JSON.stringify(data, null, 2);
                   });
