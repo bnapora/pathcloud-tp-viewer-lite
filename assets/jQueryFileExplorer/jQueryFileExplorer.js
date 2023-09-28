@@ -216,7 +216,7 @@
     }
     FolderNode.prototype.ShowCrumbs = function (crumbContainer, contentContainer) {
         $(crumbContainer).children().remove();
-        var crumbs = this.GetCrumbs();
+        crumbs = this.GetCrumbs();
         for (var i = 0; i < crumbs.length - 1; i++) {
             $("<span>").addClass("folder-crumb").text(crumbs[i].label).data('node', crumbs[i]).on("click", function (e) {
                 $(e.target).data('node').ShowContent(contentContainer, crumbContainer);

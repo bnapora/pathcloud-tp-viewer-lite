@@ -20,6 +20,12 @@
     <script type='text/javascript' src='assets/jQueryFileExplorer/split.js'></script>
     <link rel='stylesheet' href='assets/jQueryFileExplorer/jQueryFileExplorer.css' type='text/css'/>
 
+    <!-- include FilePond library -->
+    <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+    <!-- include FilePond jQuery adapter -->
+    <script src="https://unpkg.com/jquery-filepond/filepond.jquery.js"></script>
+    <!-- Filepond stylesheet -->
+    <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
 
     <!-- Bootstrap Slider -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/bootstrap-slider.min.js" integrity="sha512-f0VlzJbcEB6KiW8ZVtL+5HWPDyW1+nJEjguZ5IVnSQkvZbwBt2RfCBY0CBO1PsMAqxxrG4Di6TfsCPP3ZRwKpA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -126,11 +132,18 @@
             <div id="TM-tabs" class="tab-content">
               <!-- TAB 1.4 File Explorer ----------------------------------------------------------------------------- -->
               <div class="tab-pane" id="file-explorer">
-                <div class="panel panel-default">
-                  <div class="panel-body">
-                    <div style='border: 1px solid silver; width: 100%;' id='fileexplorer1'></div>
+
+                <section>
+                  <div class="panel panel-default" style="width: 20vw; float: left;">
+                    <div class="panel-body">
+                      <div style='border: 1px solid silver; width: 100%' id='fileexplorer1'></div>
+                    </div>
                   </div>
-                </div>
+
+                  <div class="tab-pane" style="float: right; width: 10vw;">
+                    <input type="file" class="my-pond" name="filepond"/>
+                  </div>
+                </section>
                 <!-- end of a main panel -->
               </div>
               <!-- TAB 1.4 Slide Info ----------------------------------------------------------------------------- -->
@@ -204,6 +217,97 @@
     var defaultPathRoot = "/"
 
     var gZStackSlider = undefined
+
+    $('.my-pond').filepond();
+    // Set allowMultiple property to true
+    var hosturl = document.getElementById("txtHostURL").value;
+    $('.my-pond').filepond({
+      allowMultiple: true,
+      chunkUploads: true,	
+      server: {
+          url: `${hosturl}/file-explorer/`,                
+          process: (fieldName, file, metadata, load, error, progress, abort, transfer, options) => {
+              // fieldName is the name of the input field
+              // file is the actual file object to send
+              const formData = new FormData();
+              formData.append('target_folder', crumbs[crumbs.length-1].path);
+              formData.append(fieldName, file, file.name);
+
+              const request = new XMLHttpRequest();
+              var hosturl = document.getElementById("txtHostURL").value;
+              request.open('POST',  `${hosturl}/file-explorer/process`);
+
+              // Should call the progress method to update the progress to 100% before calling load
+              // Setting computable to false switches the loading indicator to infinite mode
+              request.upload.onprogress = (e) => {
+                  progress(e.lengthComputable, e.loaded, e.total);
+              };
+
+              // Should call the load method when done and pass the returned server file id
+              // this server file id is then used later on when reverting or restoring a file
+              // so your server knows which file to return without exposing that info to the client
+              request.onload = function () {
+                  if (request.status >= 200 && request.status < 300) {
+                      // the load method accepts either a string (id) or an object
+                      load(request.responseText);
+                      console.log(request.responseText);
+                      $("div.foldertree-node-selected > .foldertree-label").click();
+                  } else {
+                      // Can call the error method if something is wrong, should exit after
+                      error(request.status);
+                  }
+              };
+
+              request.send(formData);
+
+              // Should expose an abort method so the request can be cancelled
+              return {
+                  abort: () => {
+                      // This function is entered if the user has tapped the cancel button
+                      request.abort();
+
+                      // Let FilePond know the request has been cancelled
+                      abort();
+                  },
+              };
+          },
+
+          revert: (uniqueFileId, load, error) => {
+
+              const formData = new FormData();
+              formData.append('file_path', uniqueFileId);
+
+              const request = new XMLHttpRequest();
+              var hosturl = document.getElementById("txtHostURL").value;
+              request.open('DELETE',  `${hosturl}/file-explorer/delete`);
+
+              request.onload = function () {
+                  if (request.status >= 200 && request.status < 300) {
+                      // the load method accepts either a string (id) or an object
+                      load(request.responseText);
+                  } else {
+                      // Can call the error method if something is wrong, should exit after
+                      error(request.status);
+                  }
+              };
+              request.send(formData);
+              // Should call the load method when done, no parameters required
+              load();
+          },
+          restore: './restore/',
+          load: './load/',
+          fetch: './fetch/',
+      },
+  });
+  
+    // Listen for addfile event
+    $('.my-pond').on('FilePond:addfile', function(e) {
+        console.log('file added event', e);
+    });
+
+    $('.my-pond').on('FilePond:initfile', function(e, file) {
+        console.log('file init event', e);
+    });
 
     function openFileBrowser() {
       if (file_explorer != undefined) {
