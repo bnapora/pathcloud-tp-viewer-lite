@@ -406,11 +406,12 @@
             $("#txtSceneID").prop("max", data.num_scenes - 1); // Set max scene ID on the user interface
             $("#txtSceneID").prop("title", `Total number of scenes: ${data.num_scenes}`);
 
+            minZoomLevel = null
             if (data.hasOwnProperty('physical_level_count') && data.physical_level_count === 1 
                 && data.l0_dimensions[0] > 10000 && data.l0_dimensions[1] > 10000) {
                   
-              alert("The tile provider is unable to provide tiles for WSI with > 10,000 pixels in either dimension and one physical level.");
-              return
+              //alert("The tile provider is unable to provide tiles for WSI with > 10,000 pixels in either dimension and one physical level.");
+              minZoomLevel = 14
             }
 
             var scene_id = document.getElementById("txtSceneID").value;
@@ -425,7 +426,10 @@
                 blendTime: 0.1,
                 constrainDuringPan: true,
                 maxZoomPixelRatio: 8,
-                minZoomLevel: 0.1,
+
+
+                minZoomLevel: minZoomLevel,
+
                 //visibilityRatio: 1,
                 zoomPerScroll: 1.1,
                 timeout: 120000,
@@ -527,6 +531,13 @@
 
             viewer.addHandler("open", function (event) {
 
+              if (minZoomLevel !== null) {
+                var tiledImage = viewer.world.getItemAt(0); 
+                var targetZoom = tiledImage.source.dimensions.x / viewer.viewport.getContainerSize().x;
+                viewer.viewport.zoomTo(targetZoom, null, true);
+              }
+
+
               // Remove all the label divs from the canvas.
               for (let index = 0; index < event.eventSource.canvas.children.length; index++) {
                 const element = event.eventSource.canvas.children[index];
@@ -537,7 +548,7 @@
               }
 
               [["getLabel", 128, 128], ["getThumbnail", 128, 128], ["getMacro", 256, 128]].forEach((element, index) => {
-                // return // Uncomment this line to disable the label, thumbnail macro view
+                //return // Uncomment this line to disable the label, thumbnail macro view
 
                 let [func, width, height] = element
                 let top_value = (index * 135)
