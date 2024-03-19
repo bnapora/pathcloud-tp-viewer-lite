@@ -364,6 +364,7 @@
     function onZStackSliderChanged(event) {
         if (gZStackSlider !== undefined && viewer !== undefined) {
             
+          // ToDo: Uncomment this line to enable the Z-Stack slider
           /*for (let index = 0; index < viewer.world.getItemCount(); index++) {
             var tiledImage = viewer.world.getItemAt(index);
             if (tiledImage !== undefined) {
@@ -374,6 +375,7 @@
               }
             }            
           }*/
+          // ToDo: Uncomment until this line
           
           viewer.goToPage(gZStackSlider.getValue());
         }
@@ -461,8 +463,11 @@
 
                     tileSources.push( {
                       tileSource: `${hosturl}/wsi-dzigen/getDZI/${file_name}/${scene_id}/${z_level}/tile`,
-                      //opacity: opacity,
-                      //preload: false,
+
+                      // ToDo: Uncomment this line to enable the Z-Stack slider
+                      // opacity: opacity,
+                      // preload: true,
+                      // ToDo: Uncomment until this line
                     })
                 }
                 options.tileSources = tileSources;
@@ -514,6 +519,7 @@
                       && gZStackSlider.getValue() + event.scroll <= gZStackSlider.options.max) {
                     gZStackSlider.setValue(gZStackSlider.getValue() + event.scroll);
                     
+                    // ToDo: Uncomment this line to enable the Z-Stack slider
                     /*for (let index = 0; index < viewer.world.getItemCount(); index++) {
                       var tiledImage = viewer.world.getItemAt(index);
                       if (tiledImage !== undefined) {
@@ -524,6 +530,8 @@
                         }
                       }            
                     }*/
+                    // ToDo: Uncomment until this line
+
                     viewer.goToPage(gZStackSlider.getValue());
                 }
               }
@@ -563,7 +571,7 @@
                 event.eventSource.canvas.appendChild(labelDiv)
 
                 var labelImg = document.createElement("img")
-                labelImg.src = `${hosturl}/wsi-asset/${func}/${file_name}/${scene_id}?width=${width}&height=${height}`
+                labelImg.src = `${hosturl}/wsi-asset/${func}/${file_name}/${scene_id}?`//width=${width}&height=${height}
                 labelImg.style.width = `${width}px` //  100%"     256px
                 labelImg.style.height = `${height}px`  //  100%"   128px
                 labelImg.style.objectFit = "contain"
