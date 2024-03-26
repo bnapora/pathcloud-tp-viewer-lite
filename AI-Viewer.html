@@ -107,6 +107,31 @@
               </label>
               <select id="tp4ConfigIds"></select>
 
+              <br>
+              <label class="nav-link" style="display:inline-block; width:100px;">
+                Backends             
+              </label>
+              <select id="tp4Vendor">
+                <option value="default">
+                  Default [Settings]
+                </option>
+                <option value="openslide">
+                  openslide
+                </option>
+                <option value="slideio">
+                  slideio
+                </option>
+                <option value="hammamatsusdk">
+                  hammamatsusdk
+                </option>
+                <option value="pydicom">
+                  pydicom
+                </option>
+                <option value="wsidicom">
+                  wsidicom
+                </option>
+              </select>
+
 
             </div>
           </div>
@@ -225,7 +250,9 @@
 
     var gZStackSlider = undefined
 
-    $("#tp4ConfigIds").on("change", SceneIDChanges);
+    $("#tp4ConfigIds").on("change", HostUrlChanged);
+    $("#tp4Vendor").on("change", HostUrlChanged);
+
     $.get(`${defaultHosturl}/wsi-dzigen/GetConfigScannerIds`)
         .done(function( data ) {
           var scanner_ids = data.scanner_ids;
@@ -373,7 +400,9 @@
       var queryString = window.location.search;
       if (queryString.includes("path=")) {
         var file_name = queryString.replace("?path=","")
-        update_ISSViewer(file_name)
+
+        var scene_id = parseInt(document.getElementById("txtSceneID").value);
+        viewer.goToPage(scene_id);
       }
     }
    
@@ -406,6 +435,100 @@
         }
       }
     }
+
+    function initViewerEvents(file_name, scene_id, scanner_id, vendor) {
+
+      viewer.addHandler("canvas-scroll", function (event) {
+        if (event.shift) {
+          event.preventDefaultAction = true;
+
+          if (gZStackSlider !== undefined 
+                && gZStackSlider.getValue() + event.scroll >= 0 
+                && gZStackSlider.getValue() + event.scroll <= gZStackSlider.options.max) {
+              gZStackSlider.setValue(gZStackSlider.getValue() + event.scroll);
+              
+              if (USE_ZSTACK_PRELOAD) {
+                for (let index = 0; index < viewer.world.getItemCount(); index++) {
+                  var tiledImage = viewer.world.getItemAt(index);
+                  if (tiledImage !== undefined) {
+                    if (index === gZStackSlider.getValue()) {
+                      tiledImage.setOpacity(1);
+                    } else {
+                      tiledImage.setOpacity(0);
+                    }
+                  }            
+                }
+              } else {
+                viewer.goToPage(gZStackSlider.getValue());
+              }
+          }
+        }
+      });
+
+      viewer.addHandler("open", function (event) {
+
+        if (minZoomLevel !== null) {
+          var tiledImage = viewer.world.getItemAt(0); 
+          var targetZoom = tiledImage.source.dimensions.x / viewer.viewport.getContainerSize().x;
+          viewer.viewport.zoomTo(targetZoom, null, true);
+        }
+
+
+        // Remove all the label divs from the canvas.
+        for (let index = 0; index < event.eventSource.canvas.children.length; index++) {
+          const element = event.eventSource.canvas.children[index];
+          if (element.id.includes("labelDiv_")) {
+            event.eventSource.canvas.removeChild(element);
+            index--;
+          }                  
+        }
+
+        [["getLabel", 128, 128], ["getThumbnail", 128, 128], ["getMacro", 256, 128]].forEach((element, index) => {
+          //return // Uncomment this line to disable the label, thumbnail macro view
+
+          let [func, width, height] = element
+          let top_value = (index * 135)
+
+          // Wrapper div to append it as child to the viewer canvas.
+          var labelDiv = document.createElement("div")
+          labelDiv.style.position = "absolute"
+          labelDiv.style.pointerEvents = "none"
+          labelDiv.style.left = top_value + "px"
+          labelDiv.style.top = 0 + "px"
+          labelDiv.id = `labelDiv_${func}`
+          event.eventSource.canvas.appendChild(labelDiv)
+
+          var labelImg = document.createElement("img")
+          labelImg.src = `${hosturl}/wsi-asset/${func}/${file_name}/${scene_id}?scanner_id=${scanner_id}&vendor=${vendor}`//width=${width}&height=${height}
+          labelImg.style.width = `${width}px` //  100%"     256px
+          labelImg.style.height = `${height}px`  //  100%"   128px
+          labelImg.style.objectFit = "contain"
+          labelImg.style.backgroundColor = "#33475b"
+          labelDiv.appendChild(labelImg)
+
+        });
+
+        viewer.addHandler('page', function (event) {
+
+          if (gZStackSlider !== undefined &&
+              event.page !== gZStackSlider.getValue()) {
+
+              gZStackSlider.setValue(event.page);
+          }
+        });
+
+        $.get( `${hosturl}/wsi-dzigen/getSlideIOMeta/${file_name}?vendor=${vendor}` )
+                  .done(function( data ) {
+                      document.getElementById('json-container-image-io-meta').innerHTML = data;
+                  });
+
+        $.get( `${hosturl}/wsi-dzigen/getMultichannelJSON/${file_name}?vendor=${vendor}` )
+                  .done(function( data ) {
+                      document.getElementById('json-container-image-io-meta-multichannel').innerHTML = JSON.stringify(data, null, 2);
+                  });
+
+        }, this);
+    }
     
     function update_ISSViewer(file_name) {
 
@@ -427,7 +550,12 @@
       }
 
       var hosturl = document.getElementById("txtHostURL").value;
-      $.get(`${hosturl}/wsi-dzigen/getSlideInfo/${file_name}`)
+      var scene_id = document.getElementById("txtSceneID").value;
+      let scanner_id = document.getElementById("tp4ConfigIds").value;
+      let vendor = document.getElementById("tp4Vendor").value;
+
+
+      $.get(`${hosturl}/wsi-dzigen/getSlideInfo/${file_name}?vendor=${vendor}`)
         .done(function( data ) {
             document.getElementById('json-container-image-gui').innerHTML = JSON.stringify(data, null, 2);                      
             $("#txtSceneID").prop("max", data.num_scenes - 1); // Set max scene ID on the user interface
@@ -440,8 +568,6 @@
               //alert("The tile provider is unable to provide tiles for WSI with > 10,000 pixels in either dimension and one physical level.");
               minZoomLevel = 14
             }
-
-            var scene_id = document.getElementById("txtSceneID").value;
 
             const default_options = {
                 id: "ISS_viewer",
@@ -465,9 +591,7 @@
                 showRotationControl: true,
                 maxImageCacheCount: 20000,
             };
-
-            let scanner_id = document.getElementById("tp4ConfigIds").value;
-
+            
             let options = {}
             if (data.num_z_layers > 1) {
                 options.showReferenceStrip = false;
@@ -522,29 +646,51 @@
 
                 gZStackSlider.on('change', onZStackSliderChanged);
 
-            if (data.num_scenes > 1) {
+                const viewer_options = Object.assign(default_options, options);                      
+                viewer = OpenSeadragon(viewer_options);
 
-              let tileSources = []
-                for (let scene_id = 0; scene_id < data.num_scenes; scene_id++) {
-                    tileSources.push(
-                        {
-                          height: data.height,
-                          width: data.width,
-                          tileSize: data.tileSize,
-                          minLevel: data.minLevel,
-                          maxLevel: data.maxLevel,
-                          getTileUrl: function( level, x, y ) {
-                            return `${hosturl}/wsi-dzigen/getDZI/${file_name}/${scene_id}/0/tile_files/${level}/${x}_${y}.jpeg?scanner_id=${scanner_id}`;
-                          }
-                        }
-                    )
-                }
-
-                options.showReferenceStrip = false;
-                options.sequenceMode = false;
-                options.preserveViewport = true;
-                options.tileSources = tileSources;
+                initViewerEvents(file_name, scene_id, scanner_id, vendor);
             }
+
+            else if (data.num_scenes > 1) {
+
+              let tileSources = [];
+              let promises = [];
+
+              for (let scene_id = 0; scene_id < data.num_scenes; scene_id++) {
+                // Create a promise for each API call
+                let promise = $.get(`${hosturl}/wsi-dzigen/getDZI/${file_name}/${scene_id}/0/tile`)
+                  .then(function(scene_data) {
+                    let tileSource = {
+                      height: parseInt(scene_data.getElementsByTagName("Size")[0].getAttribute("Height")),
+                      width: parseInt(scene_data.getElementsByTagName("Size")[0].getAttribute("Width")),
+                      tileSize: parseInt(scene_data.getElementsByTagName("Image")[0].getAttribute("TileSize")),
+                      getTileUrl: function(level, x, y) {
+                        return `${hosturl}/wsi-dzigen/getDZI/${file_name}/${scene_id}/0/tile_files/${level}/${x}_${y}.jpeg?scanner_id=${scanner_id}&vendor=${vendor}`;
+                      }
+                    };
+                    return tileSource;
+                  });
+                promises.push(promise);
+              }
+
+              // Wait for all promises to resolve
+              Promise.all(promises).then(function(results) {
+                // All API calls have finished, and results contain all tileSources
+                options.tileSources = results;
+
+                // Now you can proceed with setting other options
+                options.showReferenceStrip = false;
+                options.sequenceMode = true;
+                options.preserveViewport = true;
+
+                const viewer_options = Object.assign(default_options, options);                      
+                viewer = OpenSeadragon(viewer_options);
+
+                initViewerEvents(file_name, scene_id, scanner_id, vendor);
+              }).catch(function(error) {
+                console.error('Error fetching tile sources:', error);
+              });       
             } else {
                 options.tileSources = [
                  {
@@ -554,110 +700,16 @@
                     minLevel: data.minLevel,
                     maxLevel: data.maxLevel,
                     getTileUrl: function( level, x, y ) {
-                      return `${hosturl}/wsi-dzigen/getDZI/${file_name}/${scene_id}/0/tile_files/${level}/${x}_${y}.jpeg?scanner_id=${scanner_id}`;
+                      return `${hosturl}/wsi-dzigen/getDZI/${file_name}/${scene_id}/0/tile_files/${level}/${x}_${y}.jpeg?scanner_id=${scanner_id}&vendor=${vendor}`;
                     }
                   }
                 ]
 
+                const viewer_options = Object.assign(default_options, options);                      
+                viewer = OpenSeadragon(viewer_options);
+
+                initViewerEvents(file_name, scene_id, scanner_id, vendor);
             }
-
-            const viewer_options = Object.assign(default_options, options);                      
-
-            viewer = OpenSeadragon(viewer_options)
-
-
-            viewer.addHandler("canvas-scroll", function (event) {
-              if (event.shift) {
-                event.preventDefaultAction = true;
-
-                if (gZStackSlider !== undefined 
-                      && gZStackSlider.getValue() + event.scroll >= 0 
-                      && gZStackSlider.getValue() + event.scroll <= gZStackSlider.options.max) {
-                    gZStackSlider.setValue(gZStackSlider.getValue() + event.scroll);
-                    
-                    if (USE_ZSTACK_PRELOAD) {
-                      for (let index = 0; index < viewer.world.getItemCount(); index++) {
-                        var tiledImage = viewer.world.getItemAt(index);
-                        if (tiledImage !== undefined) {
-                          if (index === gZStackSlider.getValue()) {
-                            tiledImage.setOpacity(1);
-                          } else {
-                            tiledImage.setOpacity(0);
-                          }
-                        }            
-                      }
-                    } else {
-                      viewer.goToPage(gZStackSlider.getValue());
-                    }
-                }
-              }
-            });
-
-            viewer.addHandler("open", function (event) {
-
-              if (minZoomLevel !== null) {
-                var tiledImage = viewer.world.getItemAt(0); 
-                var targetZoom = tiledImage.source.dimensions.x / viewer.viewport.getContainerSize().x;
-                viewer.viewport.zoomTo(targetZoom, null, true);
-              }
-
-
-              // Remove all the label divs from the canvas.
-              for (let index = 0; index < event.eventSource.canvas.children.length; index++) {
-                const element = event.eventSource.canvas.children[index];
-                if (element.id.includes("labelDiv_")) {
-                  event.eventSource.canvas.removeChild(element);
-                  index--;
-                }                  
-              }
-
-              let scanner_id = document.getElementById("tp4ConfigIds").value;
-              [["getLabel", 128, 128], ["getThumbnail", 128, 128], ["getMacro", 256, 128]].forEach((element, index) => {
-                //return // Uncomment this line to disable the label, thumbnail macro view
-
-                let [func, width, height] = element
-                let top_value = (index * 135)
-
-                // Wrapper div to append it as child to the viewer canvas.
-                var labelDiv = document.createElement("div")
-                labelDiv.style.position = "absolute"
-                labelDiv.style.pointerEvents = "none"
-                labelDiv.style.left = top_value + "px"
-                labelDiv.style.top = 0 + "px"
-                labelDiv.id = `labelDiv_${func}`
-                event.eventSource.canvas.appendChild(labelDiv)
-
-                var labelImg = document.createElement("img")
-                labelImg.src = `${hosturl}/wsi-asset/${func}/${file_name}/${scene_id}?scanner_id=${scanner_id}`//width=${width}&height=${height}
-                labelImg.style.width = `${width}px` //  100%"     256px
-                labelImg.style.height = `${height}px`  //  100%"   128px
-                labelImg.style.objectFit = "contain"
-                labelImg.style.backgroundColor = "#33475b"
-                labelDiv.appendChild(labelImg)
-
-              });
-
-              viewer.addHandler('page', function (event) {
-
-                if (gZStackSlider !== undefined &&
-                    event.page !== gZStackSlider.getValue()) {
-
-                    gZStackSlider.setValue(event.page);
-                }
-              });
-
-              $.get( `${hosturl}/wsi-dzigen/getSlideIOMeta/${file_name}` )
-                        .done(function( data ) {
-                            document.getElementById('json-container-image-io-meta').innerHTML = data;
-                        });
-
-              $.get( `${hosturl}/wsi-dzigen/getMultichannelJSON/${file_name}` )
-                        .done(function( data ) {
-                            document.getElementById('json-container-image-io-meta-multichannel').innerHTML = JSON.stringify(data, null, 2);
-                        });
-
-              }, this);
-
       });
     }
 
