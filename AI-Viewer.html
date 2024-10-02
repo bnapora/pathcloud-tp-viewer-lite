@@ -104,7 +104,11 @@
               SceneID:
             </label>
             <input id="txtSceneID" type="number" min="0" onchange="SceneIDChanges()" title="">
-
+            <br>
+            <label class="nav-link" style="display:inline-block; width:100px">
+              TileSize:
+            </label>
+            <input id="txtTileSize" type="text">
             <br>
 
             <label class="nav-link" style="display:inline-block; width:100px;">
@@ -254,6 +258,7 @@
     $(document).ready(function () {
       document.getElementById("txtHostURL").setAttribute("value", defaultHosturl);
       document.getElementById("txtSceneID").setAttribute("value", defaultSceneID);
+      document.getElementById("txtTileSize").setAttribute("value", defaultTileSize);
     });
 
     var viewer = undefined;
@@ -262,6 +267,7 @@
     var defaultSceneID = 0
     var defaultZLevel = 0
     var defaultPathRoot = "/"
+    var defaultTileSize = 256
     const USE_ZSTACK_PRELOAD = true
 
     var gZStackSlider = undefined
@@ -569,6 +575,7 @@
       var scene_id = document.getElementById("txtSceneID").value;
       let scanner_id = document.getElementById("tp4ConfigIds").value;
       let vendor = document.getElementById("tp4Vendor").value;
+      let tilesize = document.getElementById("txtTileSize").value;
 
 
       $.get(`${hosturl}/wsi-dzigen/getSlideInfo/${file_name}?vendor=${vendor}`)
@@ -682,7 +689,7 @@
                     width: parseInt(scene_data.getElementsByTagName("Size")[0].getAttribute("Width")),
                     tileSize: parseInt(scene_data.getElementsByTagName("Image")[0].getAttribute("TileSize")),
                     getTileUrl: function (level, x, y) {
-                      return `${hosturl}/wsi-dzigen/getDZI/${file_name}/${scene_id}/0/tile_files/${level}/${x}_${y}.jpeg?scanner_id=${scanner_id}&vendor=${vendor}`;
+                      return `${hosturl}/wsi-dzigen/getDZI/${file_name}/${scene_id}/0/tile_files/${level}/${x}_${y}.jpeg?scanner_id=${scanner_id}&vendor=${vendor}&tile_size=${tilesize}`;
                     }
                   };
                   return tileSource;
@@ -716,7 +723,7 @@
                 minLevel: data.minLevel,
                 maxLevel: data.maxLevel,
                 getTileUrl: function (level, x, y) {
-                  return `${hosturl}/wsi-dzigen/getDZI/${file_name}/${scene_id}/0/tile_files/${level}/${x}_${y}.jpeg?scanner_id=${scanner_id}&vendor=${vendor}`;
+                  return `${hosturl}/wsi-dzigen/getDZI/${file_name}/${scene_id}/0/tile_files/${level}/${x}_${y}.jpeg?scanner_id=${scanner_id}&vendor=${vendor}&tile_size=${tilesize}`;
                 }
               }
             ]
