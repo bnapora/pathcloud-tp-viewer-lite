@@ -274,6 +274,11 @@
 
     $("#tp4ConfigIds").on("change", HostUrlChanged);
     $("#tp4Vendor").on("change", HostUrlChanged);
+    $("#txtTileSize").on('keyup', function (e) {
+      if (e.key === 'Enter' || e.keyCode === 13) {
+        HostUrlChanged()
+        }
+    });
 
     $.get(`${defaultHosturl}/wsi-dzigen/GetConfigScannerIds`)
       .done(function (data) {
