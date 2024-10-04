@@ -108,7 +108,7 @@
             <label class="nav-link" style="display:inline-block; width:100px">
               TileSize:
             </label>
-            <input id="txtTileSize" type="number" title="Negative numbers lets TP4 pick the tile size">
+            <input id="txtTileSize" type="number">
             <br>
 
             <label class="nav-link" style="display:inline-block; width:100px;">
@@ -582,10 +582,8 @@
       let vendor = document.getElementById("tp4Vendor").value;
       let tilesize = parseInt(document.getElementById("txtTileSize").value);
 
-      let tileUrl = `${hosturl}/wsi-dzigen/getSlideInfo/${file_name}?vendor=${vendor}`;
-      if (tilesize > 0) {
-        tileUrl += `&tile_size=${tilesize}`;
-      }
+      let tileUrl = `${hosturl}/wsi-dzigen/getSlideInfo/${file_name}?vendor=${vendor}&tile_size=${tilesize}`;
+
       $.get(tileUrl)
         .done(function (data) {
           document.getElementById('json-container-image-gui').innerHTML = JSON.stringify(data, null, 2);
@@ -650,13 +648,13 @@
 
               if (USE_ZSTACK_PRELOAD) {
                 tileSources.push({
-                  tileSource: `${hosturl}/wsi-dzigen/getDZI/${file_name}/${scene_id}/${z_level}/tile`,
+                  tileSource: `${hosturl}/wsi-dzigen/getDZI/${file_name}/${scene_id}/${z_level}/tile?vendor=${vendor}&tile_size=${tilesize}`,
                   opacity: opacity,
                   preload: true,
                 })
               } else {
                 tileSources.push({
-                  tileSource: `${hosturl}/wsi-dzigen/getDZI/${file_name}/${scene_id}/${z_level}/tile`,
+                  tileSource: `${hosturl}/wsi-dzigen/getDZI/${file_name}/${scene_id}/${z_level}/tile?vendor=${vendor}&tile_size=${tilesize}`,
                 })
               }
             }
@@ -690,7 +688,7 @@
 
             for (let scene_id = 0; scene_id < data.num_scenes; scene_id++) {
               // Create a promise for each API call
-              let tileUrl =`${hosturl}/wsi-dzigen/getDZI/${file_name}/${scene_id}/0/tile?vendor=${vendor}`
+              let tileUrl =`${hosturl}/wsi-dzigen/getDZI/${file_name}/${scene_id}/0/tile?vendor=${vendor}&tile_size=${tilesize}`
               if (tilesize > 0) {
                 tileUrl += `&tile_size=${tilesize}`;
               }
@@ -701,7 +699,7 @@
                     width: parseInt(scene_data.getElementsByTagName("Size")[0].getAttribute("Width")),
                     tileSize: parseInt(scene_data.getElementsByTagName("Image")[0].getAttribute("TileSize")),
                     getTileUrl: function (level, x, y) {
-                      return `${hosturl}/wsi-dzigen/getDZI/${file_name}/${scene_id}/0/tile_files/${level}/${x}_${y}.jpeg?scanner_id=${scanner_id}&vendor=${vendor}`;
+                      return `${hosturl}/wsi-dzigen/getDZI/${file_name}/${scene_id}/0/tile_files/${level}/${x}_${y}.jpeg?scanner_id=${scanner_id}&vendor=${vendor}&tile_size=${scene_data.getElementsByTagName("Image")[0].getAttribute("TileSize")}`;
                     }
                   };
                   return tileSource;
@@ -735,7 +733,7 @@
                 minLevel: data.minLevel,
                 maxLevel: data.maxLevel,
                 getTileUrl: function (level, x, y) {
-                  return `${hosturl}/wsi-dzigen/getDZI/${file_name}/${scene_id}/0/tile_files/${level}/${x}_${y}.jpeg?scanner_id=${scanner_id}&vendor=${vendor}`;
+                  return `${hosturl}/wsi-dzigen/getDZI/${file_name}/${scene_id}/0/tile_files/${level}/${x}_${y}.jpeg?scanner_id=${scanner_id}&vendor=${vendor}&tile_size=${data.tileSize}`;
                 }
               }
             ]
